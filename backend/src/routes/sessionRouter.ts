@@ -145,26 +145,55 @@ sessionRouter.post('/join/:sessionId', async(req, res) => {
     }
 })  
 
-sessionRouter.delete('/:sessionId', async (req, res) => {
+sessionRouter.delete('/end/:sessionId', async (req, res) => {
     if(!req.isAdmin == true){
         res.status(400).json({
             message : "Only Admins are allowed"
         })
     }
-    const sessionId = req.params.sessionId;
-    roomService.deleteRoom(sessionId).then( () => {
-        console.log("Room Deleted")
-    })
+    try{
+        const sessionId = req.params.sessionId;
+        roomService.deleteRoom(sessionId).then( () => {
+            console.log("Room Deleted")
+        })
 
-    await prisma.session.update({
-        where : {
-            id : sessionId
-        },
-        data : {
-            status : "FINISHED"
-        }
-    })
+        await prisma.session.update({
+            where : {
+                id : sessionId
+            },
+            data : {
+                status : "FINISHED"
+            }
+        })
+        res.status(200).json({
+            message : "Session Ended"
+        })
+    }catch(e : any){
+        res.status(500).json({
+            message : e.message
+        })
+        return
+    }
+})
 
+sessionRouter.delete('/:sessionId', async (req, res) => {
+    const sessionId = req.params.sessionId
+    try{
+        await prisma.session.delete({
+            where : {
+                id : sessionId
+            }
+        })
+
+        res.status(200).json({
+            message : "Session Deleted successfully"
+        })
+    }catch(e : any){
+        res.status(500).json({
+            message : e.message
+        })
+        return
+    }
 })
 
 sessionRouter.get('/sessions', async (req, res) => {

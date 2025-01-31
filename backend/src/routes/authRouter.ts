@@ -3,6 +3,7 @@ import { signinSchema, signupSchema } from "../types/types";
 import bcrypt from "bcrypt"
 import { prisma } from "../db/client";
 import jwt from "jsonwebtoken"
+import { JWT_SECRET } from "../config/config";
 export const authRouter = Router();
 
 authRouter.post("/signin", async(req, res) => {
@@ -35,10 +36,10 @@ authRouter.post("/signin", async(req, res) => {
             return
         }
 
-        const token = await jwt.sign({
+        const token = jwt.sign({
             userId : user.id,
             isAdmin : user.isAdmin
-        }, "JWT_SECRET")
+        }, JWT_SECRET || "JWT_SECRET")
 
         res.status(200).json({
             message : `User ${user.id} signed in successfully`,

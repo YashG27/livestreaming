@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { decode } from "jsonwebtoken"
-export const authMiddleware = (req : Request, res : Response, next : NextFunction) => {
+import { prisma } from "../db/client";
+export const authMiddleware = async (req : Request, res : Response, next : NextFunction) => {
     const token = req.headers.authorization?.split(" ")[1];
     if(!token){
         res.status(400).json({
@@ -18,6 +19,17 @@ export const authMiddleware = (req : Request, res : Response, next : NextFunctio
                 message : "Unauthorized"
             })
             return
+        }
+        const user = await prisma.user.findUnique({
+            where : {
+                id : decoded.userId,
+                isAdmin : decoded.isAdmin
+            }
+        })
+        if(!user){
+            res.status(404).json({
+                message : "User doesnt exist"
+            })
         }
         req.userId = decoded.userId;
         req.isAdmin = decoded.isAdmin;

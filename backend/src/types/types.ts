@@ -13,6 +13,12 @@ export const signinSchema = z.object({
     password : z.string().min(8)
 })
 
+export const createSessionSchema = z.object({
+    title : z.string().min(3),
+    startTime : z.date(),
+    userId : z.string()
+})
+
 declare global {
     namespace Express {
         interface Request {

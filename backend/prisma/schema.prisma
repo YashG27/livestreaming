@@ -23,23 +23,23 @@ model User {
 }
 
 model Session {
-  id  String  @id @default(cuid())
+  id        String        @id @default(cuid())
   creatorId String
-  creator   User  @relation(fields: [creatorId], references: [id])
+  creator   User          @relation(fields: [creatorId], references: [id])
   startTime DateTime
   endTime   DateTime?
-  roomName  String
-  createdAt DateTime  @default(now())
+  title     String
+  createdAt DateTime      @default(now())
   status    SessionStatus @default(PENDING)
   slides    Slides[] 
 }
 
 model Slides {
-  id  Int   @id @default(autoincrement())
-  url String
-  createdAt DateTime @default(now())
+  id        Int           @id @default(autoincrement())
+  url       String
+  createdAt DateTime      @default(now())
   sessionId String
-  session   Session   @relation(fields: [sessionId], references: [id])
+  session   Session       @relation(fields: [sessionId], references: [id])
 }
 
 enum SessionStatus {

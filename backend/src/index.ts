@@ -1,9 +1,10 @@
 import express from "express"
 import { AccessToken } from "livekit-server-sdk";
 import { prisma } from "./db/client";
-
 import cors from "cors"
-import { authRouter } from "./routes/authRouter";
+import { authRouter } from "./routes/authRouter";   
+import { sessionRouter } from "./routes/sessionRouter";
+console.log(process.env)
 const app = express();
 
 app.use(express.json());
@@ -18,7 +19,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('api/v1/auth', authRouter)
-app.use('api/v1/session')
+app.use('api/v1/session', sessionRouter)
 app.get('/getToken', async(req, res) => {
     const { roomName, participantName} = req.body;
 
